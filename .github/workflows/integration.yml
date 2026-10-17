@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      count:
+        description: "go test -count: сколько раз повторить каждый тест (150 ≈ 5 минут для подхода 1)"
+        default: "1"
 
 jobs:
   test:
@@ -63,10 +67,10 @@ jobs:
         run: |
           start=$(date +%s.%N)
           set +e
-          go test -tags=integration -count=1 -p=${{ matrix.p }} ./tests/${{ matrix.dir }}/... 2>&1 | tee test.log
+          go test -tags=integration -timeout=30m -count=${{ inputs.count || 1 }} -p=${{ matrix.p }} ./tests/${{ matrix.dir }}/... 2>&1 | tee test.log
           code=${PIPESTATUS[0]}
           set -e
           took=$(awk "BEGIN{printf \"%.1f\", $(date +%s.%N) - $start}")
           result=$([ "$code" = 0 ] && echo "✅" || echo "❌")
-          echo "| ${{ matrix.name }} | -p=${{ matrix.p }} | ${took} с | ${result} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ${{ matrix.name }} | -p=${{ matrix.p }}, -count=${{ inputs.count || 1 }} | ${took} с | ${result} |" >> "$GITHUB_STEP_SUMMARY"
           exit $code
