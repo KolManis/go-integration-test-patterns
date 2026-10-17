@@ -5,6 +5,7 @@ go 1.26.5
 require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.11.0
+	github.com/ozontech/testo v1.8.0
 	github.com/stretchr/testify v1.12.1
 )
 
