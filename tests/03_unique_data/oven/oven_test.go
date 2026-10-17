@@ -11,8 +11,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/example/go-integration-test-patterns/internal/bakery"
-	"github.com/example/go-integration-test-patterns/internal/testdb"
+	"github.com/KolManis/go-integration-test-patterns/internal/bakery"
+	"github.com/KolManis/go-integration-test-patterns/internal/testdb"
 )
 
 var (

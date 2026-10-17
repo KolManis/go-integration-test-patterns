@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/example/go-integration-test-patterns/internal/bakery"
+	"github.com/KolManis/go-integration-test-patterns/internal/bakery"
 )
 
 // TxDatabase — отдельная БД подхода 4. В общей базе подхода 3 остаются закоммиченные заказы,

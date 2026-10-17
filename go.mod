@@ -1,4 +1,4 @@
-module github.com/example/go-integration-test-patterns
+module github.com/KolManis/go-integration-test-patterns
 
 go 1.26.5
 
