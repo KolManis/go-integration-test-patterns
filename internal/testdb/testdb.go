@@ -47,7 +47,7 @@ func Migrate(tb testing.TB, pool *pgxpool.Pool) {
 
 func migrationSQL(tb testing.TB) string {
 	tb.Helper()
-	sql, err := os.ReadFile(filepath.Join(repoRoot(), "migrations", "001_init.sql"))
+	sql, err := os.ReadFile(migrationPath())
 	if err != nil {
 		tb.Fatalf("read migration: %v", err)
 	}
@@ -61,6 +61,8 @@ func Truncate(tb testing.TB, pool *pgxpool.Pool) {
 		tb.Fatalf("truncate: %v", err)
 	}
 }
+
+func migrationPath() string { return filepath.Join(repoRoot(), "migrations", "001_init.sql") }
 
 func repoRoot() string {
 	_, file, _, _ := runtime.Caller(0)
