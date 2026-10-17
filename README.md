@@ -21,6 +21,10 @@
 | 4 | `tests/04_tx_rollback` | транзакция на тест, в конце `ROLLBACK` | `t.Parallel()`, но с ограничениями |
 | 5 | `tests/05_testo` | подход 4 на фреймворке Testo | `t.Parallel()` один раз в `BeforeEach` |
 
+## Шпаргалка
+
+Короткие главы по изоляции Postgres, Kafka, Redis, другим общим ресурсам, настройке параллельности и e2e, плюс ссылки: [docs/](docs/README.md).
+
 ## Запуск
 
 ```bash
