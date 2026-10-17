@@ -30,6 +30,12 @@ go test -tags=integration -p=1 -count=1 ./tests/01_shared_db/...
 
 Адрес БД — переменная `TEST_DATABASE_URL`, по умолчанию Postgres из `docker-compose.yml` (порт 5433).
 
+## CI
+
+`.github/workflows/integration.yml` — по джобе на подход, у каждой свой Postgres (service-контейнер).
+Время и результат каждой джобы пишутся в Summary прогона. Джоба «01 shared DB (-p=2)» помечена
+`continue-on-error`: она показывает, что подход 1 не переносит параллельных пакетов, и может падать.
+
 ## Результаты
 
 ### Подход 1 — общая БД
