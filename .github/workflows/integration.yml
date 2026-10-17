@@ -21,22 +21,22 @@ jobs:
             dir: 01_shared_db
             p: 1
           # Показывает, что общая БД с TRUNCATE не переносит параллельные пакеты: может упасть.
-          - name: 01 shared DB (-p=2, may fail)
+          - name: 01 shared DB (-p=4, may fail)
             dir: 01_shared_db
-            p: 2
+            p: 4
             allow_failure: true
           - name: 02 DB per package
             dir: 02_db_per_package
-            p: 2
+            p: 4
           - name: 03 unique data
             dir: 03_unique_data
-            p: 2
+            p: 4
           - name: 04 tx rollback
             dir: 04_tx_rollback
-            p: 2
+            p: 4
           - name: 05 testo
             dir: 05_testo
-            p: 2
+            p: 4
     continue-on-error: ${{ matrix.allow_failure == true }}
 
     services:

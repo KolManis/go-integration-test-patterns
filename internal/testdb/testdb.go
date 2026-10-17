@@ -40,7 +40,7 @@ func Connect(tb testing.TB, dsn string) *pgxpool.Pool {
 // Migrate применяет схему. Идемпотентно: CREATE ... IF NOT EXISTS.
 func Migrate(tb testing.TB, pool *pgxpool.Pool) {
 	tb.Helper()
-	if _, err := pool.Exec(context.Background(), migrationSQL(tb)); err != nil {
+	if err := migrateLocked(context.Background(), pool, migrationSQL(tb)); err != nil {
 		tb.Fatalf("apply migration: %v", err)
 	}
 }

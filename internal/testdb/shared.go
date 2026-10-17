@@ -50,12 +50,38 @@ func run(m *testing.M, dsn string, setup func(*pgxpool.Pool)) int {
 		fmt.Fprintf(os.Stderr, "read migration: %v\n", err)
 		return 1
 	}
-	if _, err := pool.Exec(ctx, string(sql)); err != nil {
+	// Пакеты стартуют одновременно, а параллельный CREATE TABLE IF NOT EXISTS в Postgres может упасть
+	// с duplicate key — поэтому миграция под advisory-блокировкой.
+	if err := migrateLocked(ctx, pool, string(sql)); err != nil {
 		fmt.Fprintf(os.Stderr, "migrate: %v\n", err)
 		return 1
 	}
 	setup(pool)
 	return m.Run()
+}
+
+func migrateLocked(ctx context.Context, pool *pgxpool.Pool, sql string) error {
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx) //nolint:errcheck
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`, templateLock); err != nil {
+		return err
+	}
+	// Схема уже есть — не трогаем её. CREATE INDEX IF NOT EXISTS берёт блокировку таблицы, даже если индекс
+	// есть: она встаёт в очередь за транзакциями тестов соседнего пакета, а их запросы — за ней, и всё виснет.
+	var exists bool
+	if err := tx.QueryRow(ctx, `SELECT to_regclass('orders') IS NOT NULL`).Scan(&exists); err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
+	if _, err := tx.Exec(ctx, sql); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
 }
 
 // ensureDatabase создаёт БД, если её нет, и возвращает её адрес. Пакеты, стартующие одновременно,
