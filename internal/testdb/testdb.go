@@ -40,13 +40,18 @@ func Connect(tb testing.TB, dsn string) *pgxpool.Pool {
 // Migrate применяет схему. Идемпотентно: CREATE ... IF NOT EXISTS.
 func Migrate(tb testing.TB, pool *pgxpool.Pool) {
 	tb.Helper()
+	if _, err := pool.Exec(context.Background(), migrationSQL(tb)); err != nil {
+		tb.Fatalf("apply migration: %v", err)
+	}
+}
+
+func migrationSQL(tb testing.TB) string {
+	tb.Helper()
 	sql, err := os.ReadFile(filepath.Join(repoRoot(), "migrations", "001_init.sql"))
 	if err != nil {
 		tb.Fatalf("read migration: %v", err)
 	}
-	if _, err := pool.Exec(context.Background(), string(sql)); err != nil {
-		tb.Fatalf("apply migration: %v", err)
-	}
+	return string(sql)
 }
 
 // Truncate стирает все данные — так делают тесты на общей БД перед и после каждого теста.
